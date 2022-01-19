@@ -9,7 +9,7 @@ suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts']
 ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '8', '9', '10', 'Jack', 'Queen', 'King']
 values = {'Ace': 11, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 
           'Jack': 10, 'Queen': 10, 'King': 10}
-
+playing = True
 
 # Create individual card 
 class Card:     
@@ -44,7 +44,7 @@ class Deck:
         return card
 
 
-# initalize hand
+# initalize hand for player/dealer
 class Hand:
     def __init__(self):
         self.cards =[]
@@ -75,6 +75,7 @@ class Chips:
     def lose_bet(self):
         self.total -= self.bet
 
+
 # take user bet, loops until user enters valid bet (int)
 def take_bet(chips):
     while True:
@@ -89,6 +90,59 @@ def take_bet(chips):
 def hit(deck, hand):
     hand.add_card(deck.deal())
     hand.adjust_aces()  # Adjust for aces after each deal
+
+def hit_or_stand(deck, hand):
+    while playing:  
+        move = input('Would you like to hit or stand (h/s)? ').lower().strip(".!? ")
+        if move == 'h':
+            print('Player hits...')
+            hit(deck, hand)
+        elif move == 's':
+            print('Player stands. Dealer is playing...')
+            playing = False
+        else:
+            print('Invalid input. Please try again')
+
+# show only 1 dealer card and hide other
+def show_some(player, dealer):
+    print("\nDealer's hand:")
+    print('<Card Hidden>')
+    print(dealer.cards[1])
+    print("\nPlayer's hand:")
+    print(*player.cards, sep='\n')
+
+# Shows all cards. Used only at end of game
+def show_all(player, dealer):
+    print(f"\nDealer's hand: {dealer.value}")
+    print(*dealer.cards, sep='\n')
+    print(f"\nPlayer's hand: {player.value}")
+    print(*player.cards, sep='\n')
+
+# Functions to display corresponding win/lose messages and update player's chip balance
+def player_win(chips):
+    chips.win_bet()
+    print('Player wins!')
+    print(f'You receive {chips.bet}')
+    print(f'Current chips balance: {chips.total}')
+
+def dealer_win(chips):
+    chips.lose_bet()
+    print('Dealer wins!')
+    print(f'You lose {chips.bet}')
+    print(f'Current chips balance: {chips.total}')
+
+def player_bust(chips):
+    chips.lose_bet()
+    print('Player busts! Dealer wins!')
+    print(f'You lose {chips.bet}')
+    print(f'Current chips balance: {chips.total}')
+
+def dealer_bust(chips):
+    chips.win_bet()
+    print('Dealer busts! Player wins!')
+    print(f'You receive {chips.bet}')
+    print(f'Current chips balance: {chips.total}')
+
 
 
 
