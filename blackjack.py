@@ -11,6 +11,8 @@ values = {'Ace': 11, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9'
           'Jack': 10, 'Queen': 10, 'King': 10}
 playing = True
 
+# **** Functions and classes ****
+
 # Create individual card 
 class Card:     
     def __init__(self, suit, rank):
@@ -118,44 +120,54 @@ def show_all(player, dealer):
     print(f"\nPlayer's hand: {player.value}")
     print(*player.cards, sep='\n')
 
-# Functions to display corresponding win/lose messages and update player's chip balance
+# Functions to display corresponding win/lose messages and update player's chip balance 
 def player_win(chips):
     chips.win_bet()
-    print('Player wins!')
-    print(f'You receive {chips.bet}')
-    print(f'Current chips balance: {chips.total}')
+    print('\nPlayer wins!')
+    print(f'You receive {chips.bet}\n')
 
 def dealer_win(chips):
     chips.lose_bet()
-    print('Dealer wins!')
-    print(f'You lose {chips.bet}')
-    print(f'Current chips balance: {chips.total}')
+    print('\nDealer wins!')
+    print(f'You lose {chips.bet}\n')
 
 def player_bust(chips):
     chips.lose_bet()
-    print('Player busts! Dealer wins!')
-    print(f'You lose {chips.bet}')
-    print(f'Current chips balance: {chips.total}')
+    print('\nPlayer busts! Dealer wins!')
+    print(f'You lose {chips.bet}\n')
 
 def dealer_bust(chips):
     chips.win_bet()
-    print('Dealer busts! Player wins!')
-    print(f'You receive {chips.bet}')
-    print(f'Current chips balance: {chips.total}')
+    print('\nDealer busts! Player wins!')
+    print(f'You receive {chips.bet}\n')
+
+# Player receives their initial bet back in case of push. (i.e. they do not lose/gain chips)
+def push():
+    print("\nIt's a push! Neither player nor dealer win.")
+    print('You do not lose or receive any chips.\n')
 
 
+# **** Implementing the game ****
 
+while playing:
 
+    print('Welcome to Black Jack! Get as close to 21 as possible without going over!')
+    print('Dealer hits until they reach 17. Aces count as 1 or 11.')
 
+    # Create and shuffle deck
+    deck = Deck()
+    deck.shuffle()
 
-# Testing
-test_deck = Deck()
-test_deck.shuffle()
-test_player = Hand()
-test_player.add_card(test_deck.deal())
-test_player.add_card(test_deck.deal())
+    # Give dealer and player 2 cards each
+    dealer_hand = Hand()
+    dealer_hand.add_card(deck.deal())
+    dealer_hand.add_card(deck.deal())
 
-for card in test_player.cards:
-    print(card)
+    player_hand =  Hand()
+    player_hand.add_card(deck.deal())
+    player_hand.add_card(deck.deal())
+    player_chips = Chips()
 
-print(test_player.value)
+    # Display all player cards, and only 1 dealer card
+    show_some(player_hand, dealer_hand)
+    
