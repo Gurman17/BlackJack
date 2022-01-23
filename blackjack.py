@@ -81,66 +81,69 @@ class Chips:
 
 # take user bet, loops until user enters valid bet (int)
 def take_bet(chips):
-    while True:
-        try:
-            chips.bet = int(input('How many chips would you like to bet? ==>'))
-        except ValueError:
-            print('That is not a valid input. Enter an integer value.')
-        else:
-            if chips.bet > chips.total:
-                print(f"Sorry, your bet can't exceed {chips.total}")
+    #while True:
+    try:
+        print(f'Current balance: {chips.total} chips')
+        chips.bet = int(input('How many chips would you like to bet? ==> '))
+    except ValueError:
+        print('That is not a valid input. Enter an integer value.')
+    else:
+        if chips.bet > chips.total:
+            print(f"Sorry, your bet can't exceed {chips.total}.")
 
 def hit(deck, hand):
     hand.add_card(deck.deal())
     hand.adjust_aces()  # Adjust for aces after each deal
 
 def hit_or_stand(deck, hand):
+    global hitting
     while hitting:  
         move = input('Would you like to hit or stand (h/s)? ==> ').lower().strip(".!? ")
         if move == 'h':
-            print('Player hits...')
+            print('\nPlayer hits...')
             hit(deck, hand)
+            show_some(player_hand, dealer_hand)
         elif move == 's':
-            print('Player stands. Dealer is playing...')
+            print('\nPlayer stands. Dealer is playing...')
             hitting = False
         else:
-            print('Invalid input. Please try again')
+            print('\nInvalid input. Please try again')
 
 # show only 1 dealer card and hide other
 def show_some(player, dealer):
     print("\nDealer's hand:")
     print('[Card Hidden]')
     print(dealer.cards[1])
-    print("\nPlayer's hand:")
+    print(f"\nPlayer's hand - Value {player_hand.value}:")
     print(*player.cards, sep='\n')
 
 # Shows all cards. Used only at end of game
 def show_all(player, dealer):
-    print(f"\nDealer's hand: {dealer.value}")
+    print(f"\nDealer's hand - Value {dealer_hand.value}: ")
     print(*dealer.cards, sep='\n')
-    print(f"\nPlayer's hand: {player.value}")
+    print(f"\nPlayer's hand  - Value {player_hand.value}: ")
     print(*player.cards, sep='\n')
 
 # Functions to display corresponding win/lose messages and update player's chip balance 
 def player_win(chips):
     chips.win_bet()
     print('\nPlayer wins!')
-    print(f'You receive {chips.bet}\n')
+    print(f'You receive {chips.bet} chips.\n')
 
 def dealer_win(chips):
     chips.lose_bet()
     print('\nDealer wins!')
-    print(f'You lose {chips.bet}\n')
+    print(f'You lose {chips.bet} chips.\n')
 
 def player_bust(chips):
     chips.lose_bet()
     print('\nPlayer busts! Dealer wins!')
-    print(f'You lose {chips.bet}\n')
+    print(f'You lose {chips.bet} chips.\n')
 
 def dealer_bust(chips):
     chips.win_bet()
     print('\nDealer busts! Player wins!')
-    print(f'You receive {chips.bet}\n')
+    print(f'You receive {chips.bet} chips.\n')
 
 # Player receives their initial bet back in case of push. (i.e. they do not lose/gain chips)
 def push():
@@ -152,7 +155,7 @@ def push():
 
 while playing:
 
-    print('Welcome to Black Jack! Get as close to 21 as possible without going over!')
+    print('\nWelcome to Black Jack! Get as close to 21 as possible without going over!')
     print('Dealer hits until they reach 17. Aces count as 1 or 11.\n')
 
     # Create and shuffle deck
@@ -168,20 +171,21 @@ while playing:
     player_hand.add_card(deck.deal())
     player_hand.add_card(deck.deal())
     player_chips = Chips()
+    take_bet(player_chips)
 
     # Display all player cards, and only 1 dealer card
     show_some(player_hand, dealer_hand)
 
     while hitting:
         hit_or_stand(deck, player_hand)
-
+        print()
         show_some(player_hand, dealer_hand)
 
         if player_hand.value > 21:
             player_bust(player_chips)
             hitting = False
 
-    if player_hand <= 21:
+    if player_hand.value <= 21:
 
         while dealer_hand.value < 17:
             hit(deck, dealer_hand)
@@ -208,4 +212,4 @@ while playing:
     new_game = input("Would you like to play another game? (y/n) ==> ").lower().strip(' .?!')
     if new_game == 'n':
         playing = False
-        print('Ok, Bye!')
+        print('\nOk, Bye!')
