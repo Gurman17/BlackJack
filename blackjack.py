@@ -9,7 +9,8 @@ suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts']
 ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '8', '9', '10', 'Jack', 'Queen', 'King']
 values = {'Ace': 11, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 
           'Jack': 10, 'Queen': 10, 'King': 10}
-playing = True
+playing = True # Indicates if player still wants to play the game
+hitting = True # Indicates if player is hitting (adding cards)
 
 # **** Functions and classes ****
 
@@ -82,7 +83,7 @@ class Chips:
 def take_bet(chips):
     while True:
         try:
-            chips.bet = int(input('How many chips would you like to bet? '))
+            chips.bet = int(input('How many chips would you like to bet? ==>'))
         except ValueError:
             print('That is not a valid input. Enter an integer value.')
         else:
@@ -94,21 +95,21 @@ def hit(deck, hand):
     hand.adjust_aces()  # Adjust for aces after each deal
 
 def hit_or_stand(deck, hand):
-    while playing:  
-        move = input('Would you like to hit or stand (h/s)? ').lower().strip(".!? ")
+    while hitting:  
+        move = input('Would you like to hit or stand (h/s)? ==> ').lower().strip(".!? ")
         if move == 'h':
             print('Player hits...')
             hit(deck, hand)
         elif move == 's':
             print('Player stands. Dealer is playing...')
-            playing = False
+            hitting = False
         else:
             print('Invalid input. Please try again')
 
 # show only 1 dealer card and hide other
 def show_some(player, dealer):
     print("\nDealer's hand:")
-    print('<Card Hidden>')
+    print('[Card Hidden]')
     print(dealer.cards[1])
     print("\nPlayer's hand:")
     print(*player.cards, sep='\n')
@@ -149,10 +150,10 @@ def push():
 
 # **** Implementing the game ****
 
-while True:
+while playing:
 
     print('Welcome to Black Jack! Get as close to 21 as possible without going over!')
-    print('Dealer hits until they reach 17. Aces count as 1 or 11.')
+    print('Dealer hits until they reach 17. Aces count as 1 or 11.\n')
 
     # Create and shuffle deck
     deck = Deck()
@@ -171,15 +172,40 @@ while True:
     # Display all player cards, and only 1 dealer card
     show_some(player_hand, dealer_hand)
 
-    while playing:
+    while hitting:
         hit_or_stand(deck, player_hand)
 
         show_some(player_hand, dealer_hand)
 
         if player_hand.value > 21:
             player_bust(player_chips)
-            break
+            hitting = False
 
     if player_hand <= 21:
+
         while dealer_hand.value < 17:
             hit(deck, dealer_hand)
+        
+        show_all(player_hand, dealer_hand)
+
+        if dealer_hand.value > 21:
+            dealer_bust(player_chips)
+        elif dealer_hand.value > player_hand.value:
+            dealer_win(player_chips)
+        elif player_hand.value > dealer_hand.value:
+            player_win(player_chips)
+        elif player_hand.value == dealer_hand.value:
+            push()
+
+    elif player_hand.value > 21:
+        player_bust(player_chips)
+    
+
+    print(f'Player current balance: {player_chips.total} chips\n')
+
+    print("That's the end of the game!\n")
+
+    new_game = input("Would you like to play another game? (y/n) ==> ").lower().strip(' .?!')
+    if new_game == 'n':
+        playing = False
+        print('Ok, Bye!')
