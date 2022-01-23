@@ -149,7 +149,7 @@ def push():
 
 # **** Implementing the game ****
 
-while playing:
+while True:
 
     print('Welcome to Black Jack! Get as close to 21 as possible without going over!')
     print('Dealer hits until they reach 17. Aces count as 1 or 11.')
@@ -170,4 +170,16 @@ while playing:
 
     # Display all player cards, and only 1 dealer card
     show_some(player_hand, dealer_hand)
-    
+
+    while playing:
+        hit_or_stand(deck, player_hand)
+
+        show_some(player_hand, dealer_hand)
+
+        if player_hand.value > 21:
+            player_bust(player_chips)
+            break
+
+    if player_hand <= 21:
+        while dealer_hand.value < 17:
+            hit(deck, dealer_hand)
