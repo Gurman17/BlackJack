@@ -97,7 +97,7 @@ def hit(deck, hand):
 
 def hit_or_stand(deck, hand):
     global hitting
-    while hitting:  
+    while hitting and player_hand.value <= 21:  
         move = input('Would you like to hit or stand (h/s)? ==> ').lower().strip(".!? ")
         if move == 'h':
             print('\nPlayer hits...')
@@ -200,9 +200,6 @@ while playing:
             player_win(player_chips)
         elif player_hand.value == dealer_hand.value:
             push()
-
-    elif player_hand.value > 21:
-        player_bust(player_chips)
     
 
     print(f'Player current balance: {player_chips.total} chips\n')
