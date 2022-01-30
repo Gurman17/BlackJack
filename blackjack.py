@@ -81,15 +81,13 @@ class Chips:
 
 # take user bet, loops until user enters valid bet (int)
 def take_bet(chips):
-    #while True:
-    try:
-        print(f'Current balance: {chips.total} chips')
-        chips.bet = int(input('How many chips would you like to bet? ==> '))
-    except ValueError:
-        print('That is not a valid input. Enter an integer value.')
-    else:
-        if chips.bet > chips.total:
-            print(f"Sorry, your bet can't exceed {chips.total}.")
+    print(f'Current balance: {chips.total} chips')
+    bet = int(input('How many chips would you like to bet? ==> '))
+    while bet > chips.total:
+          print(f"Sorry, your bet can't be more than {chips.total} chips")
+          bet = int(input('How many chips would you like to bet? ==> '))
+    chips.bet = bet
+    
 
 def hit(deck, hand):
     hand.add_card(deck.deal())
